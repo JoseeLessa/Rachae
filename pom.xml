@@ -4,13 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ===================================================================
-         ALTERE AQUI (opcional): groupId/artifactId podem ser personalizados
-         conforme o seu projeto/empresa.
-         =================================================================== -->
-    <groupId>com.meuapp</groupId>
-    <artifactId>crud-aiven-postgres</artifactId>
-    <version>1.0.0</version>
+    <groupId>com.rachae</groupId>
+    <artifactId>crud-planos</artifactId>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -20,8 +16,6 @@
     </properties>
 
     <dependencies>
-        <!-- Driver JDBC oficial do PostgreSQL: é o que permite ao Java
-             "falar" com o banco do Aiven via protocolo PostgreSQL. -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
@@ -32,8 +26,6 @@
     <build>
         <finalName>crud-aiven-postgres</finalName>
         <plugins>
-            <!-- Gera um JAR "fat jar" (com todas as dependências dentro),
-                 para você poder executar com: java -jar crud-aiven-postgres.jar -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
