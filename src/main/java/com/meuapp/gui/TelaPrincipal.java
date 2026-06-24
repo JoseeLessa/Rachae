@@ -1,7 +1,7 @@
 package com.meuapp.gui;
 
-import com.meuapp.dao.ClienteDAO;
-import com.meuapp.model.Cliente;
+import com.meuapp.dao.PlanoDAO;
+import com.meuapp.model.Plano;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -18,6 +18,10 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.util.List;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 /**
  * Tela principal da aplicação: formulário de cadastro + tabela de
  * visualização/consulta + botões de ação (Inserir, Atualizar, Excluir,
@@ -25,13 +29,16 @@ import java.util.List;
  */
 public class TelaPrincipal extends JFrame {
 
-    private final ClienteDAO dao = new ClienteDAO();
+    private final PlanoDAO dao = new PlanoDAO();
 
     private JTextField campoId;
-    private JTextField campoNome;
-    private JTextField campoEmail;
-    private JTextField campoTelefone;
+    private JTextField campoName;
+    private JTextField campoScreens;
+    private JTextField campoValue;
+    private JTextField campoPayDue;
     private JTextField campoBusca;
+
+    private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private JTable tabela;
     private DefaultTableModel modeloTabela;
@@ -54,33 +61,51 @@ public class TelaPrincipal extends JFrame {
 
     private void montarPainelFormulario() {
         JPanel painel = new JPanel(new GridLayout(2, 5, 8, 8));
-        painel.setBorder(BorderFactory.createTitledBorder("Dados do Cliente"));
+        painel.setBorder(BorderFactory.createTitledBorder("Dados do Plano"));
 
         campoId = new JTextField();
         campoId.setEditable(false); // o ID é gerado pelo banco (SERIAL)
 
-        campoNome = new JTextField();
-        campoEmail = new JTextField();
-        campoTelefone = new JTextField();
+        campoId  = new JTextField();
+        campoName = new JTextField();
+        campoScreens = new JTextField();
+        campoValue = new JTextField();
+        campoPayDue = new JTextField();
+        /*
+        campoCreationDate = new JTextField();
+        campoUpdatedAt = new JTextField();
+         */
+        campoBusca = new JTextField();
+
         campoBusca = new JTextField();
 
         painel.add(new JLabel("ID:"));
         painel.add(campoId);
-        painel.add(new JLabel("Nome:"));
-        painel.add(campoNome);
+        painel.add(new JLabel("Name:"));
+        painel.add(campoName);
+        painel.add(new JLabel("Screens:"));
+        painel.add(campoScreens);
+        painel.add(new JLabel("Value:"));
+        painel.add(campoValue);
+        painel.add(new JLabel("Pay Due:"));
+        painel.add(campoPayDue);
+        
+        /*
+        painel.add(new JLabel("Creation Date:"));
+        painel.add(campoCreationDate);
+        painel.add(new JLabel("Updated At:"));
+        painel.add(campoUpdatedAt);
+        */
         painel.add(new JLabel("Buscar por nome:"));
-
-        painel.add(new JLabel("Email:"));
-        painel.add(campoEmail);
-        painel.add(new JLabel("Telefone:"));
-        painel.add(campoTelefone);
         painel.add(campoBusca);
 
         add(painel, BorderLayout.NORTH);
     }
 
     private void montarPainelTabela() {
-        modeloTabela = new DefaultTableModel(new Object[]{"ID", "Nome", "Email", "Telefone"}, 0) {
+        modeloTabela = new DefaultTableModel(
+        new Object[]{"ID", "Name", "Screens", "Value", "Pay Due", "Creation Date", "Updated At"}, 0) {
+
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false; // edição é feita pelo formulário, não direto na tabela
@@ -123,10 +148,15 @@ public class TelaPrincipal extends JFrame {
 
     private void inserir() {
         if (!validarCampos()) return;
-        Cliente c = new Cliente(campoNome.getText(), campoEmail.getText(), campoTelefone.getText());
+        Plano p = new Plano(
+        campoName.getText(),
+        Integer.parseInt(campoScreens.getText()),
+        Double.parseDouble(campoValue.getText().replace(",", ".")),
+        LocalDate.parse(campoPayDue.getText(), FORMATO_DATA)
+        );  
         try {
-            dao.inserir(c);
-            JOptionPane.showMessageDialog(this, "Cliente inserido com sucesso!");
+            dao.inserir(p);
+            JOptionPane.showMessageDialog(this, "Plano inserido com sucesso!");
             limparFormulario();
             carregarTodos();
         } catch (RuntimeException ex) {
@@ -136,15 +166,19 @@ public class TelaPrincipal extends JFrame {
 
     private void atualizar() {
         if (campoId.getText().isBlank()) {
-            JOptionPane.showMessageDialog(this, "Selecione um cliente na tabela antes de atualizar.");
+            JOptionPane.showMessageDialog(this, "Selecione um plano na tabela antes de atualizar.");
             return;
         }
         if (!validarCampos()) return;
-        Cliente c = new Cliente(Integer.parseInt(campoId.getText()), campoNome.getText(),
-                campoEmail.getText(), campoTelefone.getText());
+        Plano p = new Plano(Integer.parseInt(campoId.getText()), campoName.getText(),
+            Integer.parseInt(campoScreens.getText()),
+            Double.parseDouble(campoValue.getText().replace(",", ".")),
+            LocalDate.parse(campoPayDue.getText(), FORMATO_DATA),
+            LocalDate.now(),  // Data atual mas DAO.atualizar não muda.
+            LocalDate.now()); // atualiza agora.
         try {
-            dao.atualizar(c);
-            JOptionPane.showMessageDialog(this, "Cliente atualizado com sucesso!");
+            dao.atualizar(p);
+            JOptionPane.showMessageDialog(this, "Plano atualizado com sucesso!");
             limparFormulario();
             carregarTodos();
         } catch (RuntimeException ex) {
@@ -154,7 +188,7 @@ public class TelaPrincipal extends JFrame {
 
     private void excluir() {
         if (campoId.getText().isBlank()) {
-            JOptionPane.showMessageDialog(this, "Selecione um cliente na tabela antes de excluir.");
+            JOptionPane.showMessageDialog(this, "Selecione um plano na tabela antes de excluir.");
             return;
         }
         int confirmacao = JOptionPane.showConfirmDialog(this, "Confirma a exclusão?", "Confirmar",
@@ -163,7 +197,7 @@ public class TelaPrincipal extends JFrame {
 
         try {
             dao.excluir(Integer.parseInt(campoId.getText()));
-            JOptionPane.showMessageDialog(this, "Cliente excluído com sucesso!");
+            JOptionPane.showMessageDialog(this, "Plano excluído com sucesso!");
             limparFormulario();
             carregarTodos();
         } catch (RuntimeException ex) {
@@ -194,10 +228,10 @@ public class TelaPrincipal extends JFrame {
 
     // ----------------------------- Auxiliares -----------------------------
 
-    private void preencherTabela(List<Cliente> clientes) {
+    private void preencherTabela(List<Plano> planos) {
         modeloTabela.setRowCount(0);
-        for (Cliente c : clientes) {
-            modeloTabela.addRow(new Object[]{c.getId(), c.getNome(), c.getEmail(), c.getTelefone()});
+        for (Plano p: planos) {
+            modeloTabela.addRow(new Object[]{p.getId(), p.getName(), p.getScreens(), p.getValue(), p.getPayDue().format(FORMATO_DATA), p.getCreationDate().format(FORMATO_DATA), p.getUpdateDate().format(FORMATO_DATA)});
         }
     }
 
@@ -205,9 +239,10 @@ public class TelaPrincipal extends JFrame {
         int linha = tabela.getSelectedRow();
         if (linha < 0) return;
         campoId.setText(modeloTabela.getValueAt(linha, 0).toString());
-        campoNome.setText(valorOuVazio(modeloTabela.getValueAt(linha, 1)));
-        campoEmail.setText(valorOuVazio(modeloTabela.getValueAt(linha, 2)));
-        campoTelefone.setText(valorOuVazio(modeloTabela.getValueAt(linha, 3)));
+        campoName.setText(valorOuVazio(modeloTabela.getValueAt(linha, 1)));
+        campoScreens.setText(valorOuVazio(modeloTabela.getValueAt(linha, 2)));
+        campoValue.setText(valorOuVazio(modeloTabela.getValueAt(linha, 3)));
+        campoPayDue.setText(valorOuVazio(modeloTabela.getValueAt(linha, 4)));
     }
 
     private String valorOuVazio(Object valor) {
@@ -216,15 +251,27 @@ public class TelaPrincipal extends JFrame {
 
     private void limparFormulario() {
         campoId.setText("");
-        campoNome.setText("");
-        campoEmail.setText("");
-        campoTelefone.setText("");
+        campoName.setText("");
+        campoScreens.setText("");
+        campoValue.setText("");
+        campoPayDue.setText("");
         tabela.clearSelection();
     }
 
     private boolean validarCampos() {
-        if (campoNome.getText().isBlank()) {
+        if (campoName.getText().isBlank()) {
             JOptionPane.showMessageDialog(this, "O campo Nome é obrigatório.");
+            return false;
+        }
+        try {
+            Integer.parseInt(campoScreens.getText());
+            Double.parseDouble(campoValue.getText().replace(",", "."));
+            LocalDate.parse(campoPayDue.getText(), FORMATO_DATA);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Telas e Valor devem ser números válidos.");
+            return false;
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(this, "Data inválida. Use o formato dd/MM/yyyy.");
             return false;
         }
         return true;
