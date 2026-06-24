@@ -1,7 +1,7 @@
 # CRUD Java + PostgreSQL (Aiven) + Swing
 
 Aplicação Java com interface gráfica (Swing) que faz CRUD completo (Inserir,
-Listar, Buscar, Atualizar, Excluir) em uma tabela `plano` de um banco
+Listar, Buscar, Atualizar, Excluir) em uma tabela `planos` de um banco
 PostgreSQL hospedado no Aiven, usando **JDBC puro** (driver oficial do
 PostgreSQL + `PreparedStatement`).
 
@@ -35,7 +35,7 @@ Lá você encontrará Conection information:
 - **User** (geralmente `avnadmin`)
 - **Password**
 
-Na aba lateral databases escolha, ou crie, uma banco de dados.
+Na aba lateral databases escolha, ou crie, um banco de dados.
 - **Database name** (geralmente `defaultdb`)
 
 ## 3. Configurando o projeto com os SEUS dados
