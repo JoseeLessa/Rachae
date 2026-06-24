@@ -1,6 +1,6 @@
 package com.meuapp;
 
-import com.meuapp.dao.ClienteDAO;
+import com.meuapp.dao.PlanoDAO;
 import com.meuapp.gui.TelaPrincipal;
 
 import javax.swing.SwingUtilities;
@@ -11,7 +11,7 @@ public class Main {
         // Cria a tabela automaticamente caso ela ainda não exista no banco.
         // Comente a linha abaixo se preferir gerenciar a tabela manualmente
         // (veja o arquivo schema.sql para criar a tabela na mão).
-        new ClienteDAO().criarTabelaSeNaoExistir();
+        new PlanoDAO().criarTabelaSeNaoExistir();
 
         // Inicia a interface gráfica na thread correta do Swing (Event Dispatch Thread).
         SwingUtilities.invokeLater(() -> {

@@ -8,12 +8,15 @@
 -- a estrutura que você quer usar.
 -- ===========================================================================
 
-CREATE TABLE IF NOT EXISTS clientes (
+CREATE TABLE IF NOT EXISTS planos (
     id SERIAL PRIMARY KEY,
-    nome VARCHAR(150) NOT NULL,
-    email VARCHAR(150),
-    telefone VARCHAR(30)
-);
+    name VARCHAR(150) NOT NULL,
+    screens INTEGER,
+    value DECIMAL(10, 2),
+    paymentDue DATE,
+    creationDate DATE,
+    updatedAt DATE"
+");
 
 -- Alguns registros de exemplo (opcional, remova se não quiser dados de teste):
 -- INSERT INTO clientes (nome, email, telefone) VALUES ('Maria Silva', 'maria@email.com', '27999990000');
