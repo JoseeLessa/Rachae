@@ -18,11 +18,11 @@ public class ConexaoBD {
     // Você encontra esses valores no painel do Aiven, na aba "Overview"
     // do seu serviço PostgreSQL (Host, Port, User, Password, Database name).
     // ===================================================================
-    private static final String HOST     = "aula-1-project-3bd8.d.aivencloud.com"; // ex: pg-xxxxxxx-projeto.aivencloud.com
-    private static final String PORT     = "26731";                  // porta numérica fornecida pelo Aiven
-    private static final String DATABASE = "TesteJava";               // nome do banco (geralmente "defaultdb")
+    private static final String HOST     = "altere"; // ex: pg-xxxxxxx-projeto.aivencloud.com
+    private static final String PORT     = "altere";                  // porta numérica fornecida pelo Aiven
+    private static final String DATABASE = "altere";               // nome do banco (geralmente "defaultdb")
     private static final String USUARIO  = "avnadmin";                // usuário padrão criado pelo Aiven
-    private static final String SENHA    = "AVNS_4DGQWqxVWBb-eIK5lB1";          // senha do serviço (não deixe em produção em texto puro!)
+    private static final String SENHA    = "suasenha";          // senha do serviço (não deixe em produção em texto puro!)
 
     // O Aiven exige conexão criptografada (SSL/TLS).
     // "require" funciona na maioria dos casos sem precisar baixar certificado.
